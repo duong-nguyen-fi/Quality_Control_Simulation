@@ -1,0 +1,73 @@
+body{
+			font-family: Tahoma, sans-serif;
+		}
+		h1{
+			text-align: center;
+		}
+		.menu{
+			padding: 50px 500px;
+			display: flex;
+  			flex-direction: column;
+  			justify-content: center;
+ 			text-align: center;
+ 			background: #35dd78;
+		}
+		.bar{
+			width: 250px;
+			margin-bottom: 40px;
+		}
+		.nameTextField{
+			border-radius: 5px;
+			font-size: 16px;
+			margin: 0 50px;
+			width: 150px;
+			margin: auto;  
+		}
+		.levelLbl{
+			font-size: 25px;
+			width: 150px;
+			margin: auto;  
+		}
+		.btns{
+			margin: auto;  
+		}
+		.item{
+            position: absolute;
+            background: gray;
+            transform: skewX(0deg);
+            border-radius: 50%;
+            width: 70px;
+            height: 50px;
+            top: 40%;
+                  
+
+        }
+        canvas{
+            border: solid;
+            border-color: blue;
+        }
+        .container{
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+                @-webkit-keyframes animatedConveyor {
+    from { background-position: 0 0; }
+    to { background-position: 370% 0; }
+
+}
+
+    #animate-area   { 
+    width: 100%; 
+    height: 100%; 
+    border:1px solid red;
+    background-image: url(surface1.jpg);
+    background-position: 0px 0px;
+ 
+    animation: animatedConveyor 40s linear infinite;
+    
+}
