@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game Menu</title>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.js"></script>
+	<script type="text/javascript" src="washer.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body ng-app="myApp">
+<h1>Six Sigma Demonstration Game</h1>
+
+<div ng-controller="MyCtrl">
+<div ng-model="gamePlay" ng-hide="gamePlay">
+<div ng-model="info" style="border: solid">
+		<label ng-model="player">Player: {{name}}</label>
+		<br/>
+		<label> Score: </label> <label id="score"></label>
+	</div>
+<div class="container">	
+    <div id="washerBox" style="position: relative;  height: 100px;  border:solid; border-color: red; background: black;">
+    	<div id="animate-area"> </div>
+    </div>    
+</div>
+</div>
+<div ng-show="visible" class="menu" >
+	<input type="text" ng-model="name" placeholder="Player's name" class="w3-input">
+	<br/>
+	<article>
+		<label class="levelLbl">Difficulty Level {{color_slider_bar.value}}</label>
+		
+		<br/>
+		<rzslider
+          rz-slider-model="color_slider_bar.value"
+          rz-slider-options="color_slider_bar.options"
+          class="bar"
+        ></rzslider>
+	</article>
+	<div class="btns">
+		<button ng-click="toggle()" class="w3-button w3-red">Go {{name}}!</button>
+		<button class="w3-button w3-red">Learn More</button>
+	</div>
+</div>
+</div>
+
+    <script type="text/javascript">
+	    var app = angular.module('myApp', ['rzModule']);
+	    app.controller('MyCtrl', function($scope, $http) {
+	    	$scope.visible = true;
+
+	    	$scope.gamePlay = true;
+
+	    	
+
+	    	$scope.color_slider_bar = {
+     			value: 5,
+      			options: {
+       			showSelectionBar: true,
+       			getSelectionBarColor: function(value) {
+		        	if (value <= 2)
+		        		return '#2AE02A';
+		        	if (value <= 3)
+	            		return 'yellow';
+		        	if (value <= 4	)
+		        		return 'orange';
+		        	return '#c42746';
+        }
+      }
+    };
+
+	  		$scope.toggle = function() {
+	    		$scope.visible = !$scope.visible;
+	    		$scope.gamePlay= !$scope.gamePlay;
+	  		};
+	    })
+    </script>
+
+    <script type="text/javascript">
+    var washers = [];
+    var frameCount = 0;
+    var totalScore = 0;
+    
+
+    setInterval(update, 10);
+
+    
+       
+    </script>
+</body>
+</html>
