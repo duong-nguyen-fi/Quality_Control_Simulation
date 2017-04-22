@@ -31,7 +31,7 @@
                 }
                 else
                 {
-                
+                    this.removed = true;
                     $(this.div).remove();
                 }
 
@@ -78,8 +78,11 @@
                
                 for (var i=0; i<washers.length;i++)
                 {
-
+                    if (washers[i].removed == true)
+                        washers.splice(i,1);
                     washers[i].Move();
+                    
+                        
                 }
             }            
 
