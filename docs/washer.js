@@ -39,6 +39,37 @@
             
        }
 
+       function moveAllConveyors()
+       {
+           for (var i=0; i<conveyors.length;i++)
+            {
+                
+                conveyors[i].Move();
+            }
+       }
+
+       function removeWasteConveyors()
+       {
+           for (var i=0; i<conveyors.length;i++)
+           {
+                if (conveyors[i].removed == true)
+                        conveyors.splice(i,1);
+                console.log(conveyors.length);
+           }
+       }
+
+       function moveAllWashers()
+       {
+            for (var i=0; i<washers.length;i++)
+                {
+
+                    if (washers[i].removed == true)
+                        washers.splice(i,1);
+                    washers[i].Move();
+                    
+                        
+                }
+       }
       
 
        function update()
@@ -46,10 +77,11 @@
             
             
             
-            var conveyor;
+            
             var flag = false;
             if ( frameCount ==0 ||gapBetween(160))
             {
+                var conveyor;
                 conveyor = new Conveyor();
                 conveyors.push(conveyor);
                 conveyor.CreateNew();
@@ -57,13 +89,11 @@
             }
             frameCount++;
 
-            for (var i=0; i<conveyors.length;i++)
-            {
-                conveyors[i].Move();
-            }
+            moveAllConveyors();
             
-            var pos = conveyors[1].x;
-            if (pos >= conveyors[1].maxX-50)
+            var pos = conveyors[0].x;
+            console.log(pos);
+            if (pos >= $("#washerBox").width()-$(".convey").width())
                 flag = true;
 
             if (flag==true)
@@ -76,15 +106,9 @@
                     washer.CreateNew(); 
                 }    
                
-                for (var i=0; i<washers.length;i++)
-                {
-                    if (washers[i].removed == true)
-                        washers.splice(i,1);
-                    washers[i].Move();
-                    
-                        
-                }
-            }            
+                moveAllWashers();
+            }//if flag
+            removeWasteConveyors();            
 
        }
 
@@ -120,7 +144,7 @@
                 }
                 else
                 {
-                
+                    this.removed = true;
                     $(this.div).remove();
                 }
 
