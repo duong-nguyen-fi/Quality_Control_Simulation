@@ -9,8 +9,7 @@
                 $("#washerBox").append($(this.div));
                 this.x = $(this.div).position().left;
                 this.maxX=  $("#washerBox").width();
-                $(this.div).click(function(){
-                    
+                $(this.div).click(function(){           
                     $(this).css("background", "blue");
                     var pos = $(this).position().left;
                     totalScore +=1;
@@ -18,7 +17,6 @@
                     console.log("------------------");
                     $("#score").text(totalScore+" ");
                 });
-
             };
 
             speed = 1.5;
@@ -92,7 +90,6 @@
             moveAllConveyors();
             
             var pos = conveyors[0].x;
-            console.log(pos);
             if (pos >= $("#washerBox").width()-$(".convey").width())
                 flag = true;
 
@@ -150,6 +147,42 @@
 
             };
             
+       }
+
+       function punch () {
+            console.log("punch");
+            $('.puncher').animate({top: 50}, {
+                duration: 200,
+                complete: function() {
+                    $('.puncher').animate({top: -10}, {
+                        duration: 200
+                    });
+                }
+            });
+        }
+
+       $(document).keydown(function(e) {
+                    if (e.keyCode == 32) {
+                        punch();
+                        var pos = $('.puncher').position().left;
+                        for (var i = 0; i<washers.length;i++)
+                        {
+                          if (washers[i].x >=pos-70 && washers[i].x <=pos+70)
+                          {
+                            intercept(washers[i]);
+                          }
+                        }
+                    }
+                });
+
+       function intercept(convey)
+       {
+                    $(convey.div).css("background", "blue");
+                    var pos = $(convey.div).position().left;
+                    totalScore +=1;
+                    console.log(pos);
+                    console.log("------------------");
+                    $("#score").text(totalScore+" ");
        }
 
                 
