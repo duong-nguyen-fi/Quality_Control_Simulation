@@ -9,12 +9,17 @@
                 $("#washerBox").append($(this.div));
                 this.x = $(this.div).position().left;
                 this.maxX=  $("#washerBox").width();
+                $("#washerBox").resize(function(){
+                    this.maxX = this.maxX=  $("#washerBox").width();
+                });
+                  
+                this.punched = false; // check if the washer was punched or not
+
                 $(this.div).click(function(){           
                     $(this).css("background", "blue");
                     var pos = $(this).position().left;
                     totalScore +=1;
-                    console.log(pos);
-                    console.log("------------------");
+                    
                     $("#score").text(totalScore+" ");
                 });
             };
@@ -52,7 +57,7 @@
            {
                 if (conveyors[i].removed == true)
                         conveyors.splice(i,1);
-                console.log(conveyors.length);
+               
            }
        }
 
@@ -129,6 +134,9 @@
                 $("#washerBox").append($(this.div));
                 this.x = $(this.div).position().left;
                 this.maxX=  $("#washerBox").width();
+                $("#washerBox").resize(function(){
+                    this.maxX = this.maxX=  $("#washerBox").width();
+                });
             };
 
             speed = 1.5;
@@ -150,7 +158,7 @@
        }
 
        function punch () {
-            console.log("punch");
+            
             $('.puncher').animate({top: 50}, {
                 duration: 200,
                 complete: function() {
@@ -167,7 +175,7 @@
                         var pos = $('.puncher').position().left;
                         for (var i = 0; i<washers.length;i++)
                         {
-                          if (washers[i].x >=pos-70 && washers[i].x <=pos+70)
+                          if ((washers[i].x >=pos-$(".item").width()/2 && washers[i].x <=pos+$(".item").width()/2) && (washers[i].punched == false))
                           {
                             intercept(washers[i]);
                           }
@@ -178,12 +186,52 @@
        function intercept(convey)
        {
                     $(convey.div).css("background", "blue");
-                    var pos = $(convey.div).position().left;
+                    convey.punched = true;
+                    var pos1 = $(convey.div).position().left;
+                    var pos2 = $(".puncher").position().left;
                     totalScore +=1;
-                    console.log(pos);
-                    console.log("------------------");
                     $("#score").text(totalScore+" ");
+                    //console.log(Math.abs(pos1-pos2));
+                    addData(Math.abs(pos1-pos2));
        }
+
+       function addData(posOffset) 
+       {   
+       /*
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        console.log("Ajax connected");
+                    }
+                };
+                xmlhttp.open("POST", "sendData.php?", true);
+                xmlhttp.send();
+        */    console.log("Offset: " + posOffset);
+              $.ajax({
+              type: 'POST',
+              data: { 
+                      offset: posOffset,
+                      id: player_id
+                  },
+              url: 'sendData.php',
+              async: false,
+
+              success: function(result){
+                  // call the function that handles the response/results
+                  drawVisualization();
+                  var player_id = result;
+                  console.log("id is " + player_id);
+              },
+
+              error: function(){
+                  window.alert("Wrong query 'queryDB.php': " + query);
+              }
+            });
+        }//
+
+        
+          
+          
 
                 
                 

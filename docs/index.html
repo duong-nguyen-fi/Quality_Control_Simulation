@@ -9,6 +9,12 @@
 	<script type="text/javascript" src="washer.js"></script>
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.css">
 	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
+
+	<script type="text/javascript" src="chart.js"></script>
+       
 </head>
 <body ng-app="myApp">
 <h1>Six Sigma Demonstration Game</h1>
@@ -20,8 +26,10 @@
 		<br/>
 		<label> Score: </label> <label id="score"></label>
 	</div>
+		<div id="chart_div" style="width: 50%; height: 200px;"></div>
+
 <div class="container">	
-    <div id="washerBox" style="position: relative; top: 70%;  height: 100px;  border:solid; border-color: red; background: black;">
+    <div id="washerBox" style="position: relative; top: 70%;  height: 100px;  border:solid; background: black;">
 	
     
     </div>    
@@ -77,6 +85,29 @@
 	  		$scope.toggle = function() {
 	    		$scope.visible = !$scope.visible;
 	    		$scope.gamePlay= !$scope.gamePlay;
+	    		
+	    		console.log($scope.name);
+	    		$.ajax({
+              type: 'POST',
+              data: { 
+                      name : $scope.name 
+                  },
+              url: 'new_player.php',
+              async: false,
+
+              success: function(result){
+                  // call the function that handles the response/results
+                  
+                player_id = result;
+                console.log(player_id);
+              },
+
+              error: function(){
+                  window.alert("Something went wrong");
+              }
+            });
+
+	    		//drawVisualization();
 	  		};
 	    })
     </script>
@@ -87,7 +118,7 @@
     var frameCount = 0;
     var totalScore = 0;
 	var gameSpeed  = 1.5;
-    
+    var player_id =0;
 
     setInterval(update, 10);
 
