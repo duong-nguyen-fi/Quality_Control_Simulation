@@ -6,43 +6,65 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.js"></script>
-	<script type="text/javascript" src="washer.js"></script>
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.css">
-	<link rel="stylesheet" href="style.css">
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
-
-	<script type="text/javascript" src="chart.js"></script>
-       
+	<script type="text/javascript" src="./js/washer.js"></script>
+	<script type="text/javascript" src="./js/conveyor.js"></script>
+	<script type="text/javascript" src="./js/puncher.js"></script>
+	<script type="text/javascript" src="./js/graph.js"></script>
+	<script type="text/javascript" src="./js/bell_chart.js"></script>
+	<!--<script type="text/javascript" src="./js/sigma.js"></script>
+	<script type="text/javascript" src="./js/std.js"></script> -->
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.1/rzslider.min.css">
+	<link rel="stylesheet" href="./css/style.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.0/jstat.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js"></script>
+	
 </head>
+
+
+
 <body ng-app="myApp">
 <h1>Six Sigma Demonstration Game</h1>
 
 <div ng-controller="MyCtrl">
 <div ng-model="gamePlay" ng-hide="gamePlay">
-<div ng-model="info" style="border: solid">
+	<!-- Pause Button -->
+	<button id='pauseBtn' class="w3-button w3-red">Pause</button>
+	<!-- Pause Pane -->
+	<div id='pausePane' class='pane'>
+		<!-- Pane Content -->
+		<div class='paneContent'>
+			<div class='paneHeader'>
+				<span class="close">&times;</span>
+				<h2>Pause</h2>	
+			</div>
+			<div class='paneBody'>
+				<p>Click outside the window to resume...</p>	
+			</div>
+    		<div class='paneFooter'>
+    			<button class="w3-button w3-red" ng-click="toEndScene()">Quit</button>
+    		</div>
+		</div>
+	</div>
+	<div ng-model="info" style=" border: solid; height: 210px">
+		<div id="monitor" style="background-color: red; height: 200px; width: 400px; float: right;"></div>
+		<div id="chart_div" style="background-color: red; height: 200px; width: 400px;"></div>
 		<label ng-model="player">Player: {{name}}</label>
 		<br/>
 		<label> Score: </label> <label id="score"></label>
+		
 	</div>
-		<div id="chart_div" style="width: 50%; height: 200px;"></div>
-
-<div class="container">	
-    <div id="washerBox" style="position: relative; top: 70%;  height: 100px;  border:solid; background: black;">
-	
-    
-    </div>    
-    <div class="puncher"> </div>
-    
-</div>
+	<div class="container">	
+    	<div id="washerBox"></div>    
+    	<div class="puncher"></div>
+	</div>
 </div>
 <div ng-show="visible" class="menu" >
 	<input type="text" ng-model="name" placeholder="Player's name" class="w3-input">
 	<br/>
 	<article>
 		<label class="levelLbl">Difficulty Level {{color_slider_bar.value}}</label>
-		
+
 		<br/>
 		<rzslider
           rz-slider-model="color_slider_bar.value"
@@ -55,6 +77,10 @@
 		<button class="w3-button w3-red">Learn More</button>
 	</div>
 </div>
+<div ng-hide='endScene' np-model='endScene'>
+	<h1>GAME OVER</h1>
+	<label>Your Score is </label> <label id="score"></label>
+</div>
 </div>
 
     <script type="text/javascript">
@@ -64,7 +90,7 @@
 
 	    	$scope.gamePlay = true;
 
-	    	
+	    	$scope.endScene = true;
 
 	    	$scope.color_slider_bar = {
      			value: 5,
@@ -78,52 +104,122 @@
 		        	if (value <= 4	)
 		        		return 'orange';
 		        	return '#c42746';
-        }
-      }
-    };
+		        }
+		      }
+		    };
 
 	  		$scope.toggle = function() {
 	    		$scope.visible = !$scope.visible;
 	    		$scope.gamePlay= !$scope.gamePlay;
-	    		
-	    		console.log($scope.name);
-	    		$.ajax({
-              type: 'POST',
-              data: { 
-                      name : $scope.name 
-                  },
-              url: 'new_player.php',
-              async: false,
-
-              success: function(result){
-                  // call the function that handles the response/results
-                  
-                player_id = result;
-                console.log(player_id);
-              },
-
-              error: function(){
-                  window.alert("Something went wrong");
-              }
-            });
-
-	    		//drawVisualization();
+	    		isPaused = false;
+	    		setInterval(function() {
+		    	if (!isPaused) {
+		    		run();
+    	}
+    }, 10);
 	  		};
+
+	  		$scope.toEndScene = function() {
+	  			$scope.gamePlay = !$scope.gamePlay;
+	  			$scope.endScene = !$scope.endScene;
+	  			isPaused = true;
+	  			
+	  		}
 	    })
     </script>
 
     <script type="text/javascript">
-    var washers = [];
-	var conveyors = [];
+    var washers = []; // array of washers objects
+	var conveyors = []; // array of conveyors objects
+	var samples = []; // 
+	//var sigma = [];
+	//var s = [0, 0, 0, 0, 0, 0, 0];
+	var targetVal = 0;
     var frameCount = 0;
     var totalScore = 0;
 	var gameSpeed  = 1.5;
-    var player_id =0;
-
-    setInterval(update, 10);
+    var isPaused = true;
+    drawGraph();
+    //drawSigma();
+    
 
     
-       
+    
+    function run()
+       {
+            var flag = false;
+            if (frameCount == 0 || gapBetween(160))
+            {
+                var conveyor;
+                conveyor = new Conveyor();
+                conveyor.CreateNew();
+
+                conveyors.push(conveyor);
+            }
+            frameCount++;
+
+            moveAllConveyors();
+            
+            var pos = conveyors[0].x;
+            if (pos >= $("#washerBox").width() - $(".convey").width())
+                flag = true;
+
+            if (flag==true)
+            {        
+                if (gapBetween(160))
+                {
+                    var washer;
+                    washer = new Washer();
+                    washers.push(washer);
+                    washer.CreateNew(); 
+                }    
+               
+                moveAllWashers();
+            }//if flag          
+            
+       }
+       function gapBetween(n)
+       {
+            if (frameCount % n == 0) return true;
+            return false;
+       }
+
     </script>
+
+
+	<!-- Pause Pane Script -->
+	<script type="text/javascript">
+		var btn =  document.getElementById('pauseBtn');
+		var pane = document.getElementById("pausePane");
+		var close = document.getElementsByClassName('close')[0];
+
+		btn.onclick = function() {
+			pane.style.display = "block";
+			isPaused = true;
+		}
+
+		close.onclick = function() {
+		    pane.style.display = "none";
+		    isPaused = false;
+		}
+
+		window.onclick = function(event) {
+			if (event.target == pane) {
+				pane.style.display = "none";
+				isPaused = false;
+			}
+		}
+		// pressing on ESC button to pause and on any key to resume
+		$(document).keydown(function(e) {
+			if (e.keyCode == 27) {
+				pane.style.display = "block";
+				isPaused = true;
+			} else if (isPaused == true) {
+				pane.style.display = "none";
+				isPaused = false;
+			}
+		})
+		
+	</script>
 </body>
 </html>
